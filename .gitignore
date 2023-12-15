@@ -1,2 +1,6 @@
 db_creds.yaml
 pg_creds.yaml
+date_details.json
+.vscode
+__pycache__
+
