@@ -14,7 +14,7 @@ class DataExtractor:
     
     def retrieve_pdf_data(self, link):
         # read all pages from the PDF document at the given link
-        dfs = tabula.read_pdf(link, stream=True, pages='all')
+        dfs = tabula.read_pdf(link , multiple_tables=True , pages='all' , lattice=True)
         df = pd.concat(dfs)
         return df
 

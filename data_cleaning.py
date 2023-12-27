@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import uuid
 
 class DataCleaning:
 
@@ -23,47 +24,65 @@ class DataCleaning:
     
     def clean_card_data(self, df):
         
-        # drop erroneous columns
-        df = df.iloc[:, :-2]
-
         # drop rows with NULL values
         df = df.dropna()
 
-        # Remove rows with incorrect data types
-        df = df[pd.to_numeric(df['card_number'], errors='coerce').notnull()]
+        # Clean card_provider column
+        values = ['VISA 16 digit', 'JCB 16 digit', 'VISA 13 digit', 'JCB 15 digit', 'VISA 19 digit', 'Diners Club / Carte Blanche', 'American Express', 'Maestro', 'Discover', 'Mastercard']
+        df = df[df['card_provider'].isin(values)]
 
-        # Convert date columns to datetime format
-        for col in df.columns:
-            if 'date' in col:
-                df[col] = pd.to_datetime(df[col], errors='coerce')
+        df['card_number'] = df['card_number'].astype(str)
+
+        df['card_number'] = df['card_number'].str.replace('?', '')
+
+        # Convert date column to datetime format
+        df['expiry_date'] = pd.to_datetime(df['expiry_date'], format = '%m/%y', errors = 'coerce')
+
+        # Convert date column to datetime format
+        #df['date_payment_confirmed'] = pd.to_datetime(df['date_payment_confirmed'], errors='coerce')
+
         
+
         return df 
         
     def clean_store_data(self, df):
 
         # Reset the index column
-        df.set_index(df.columns[0], inplace=True)
+        df = df.drop('index', axis=1)
 
         # Drop mostly NULL erroneous column
-        df = df.drop('lat', axis=1)
+        df = df.drop('lat', axis=1)  
 
-        # drop rows with NULL values 
-        df = df.dropna()
+        # Clean country_code column
+        values = ['US', 'GB', 'DE']
+        df = df[df['country_code'].isin(values)]
 
-        # Remove rows with incorrect data types
-        df = df[pd.to_numeric(df['staff_numbers'], errors='coerce').notnull()]
+        # Replace incorrect values in continent column
+        df['continent'] = df['continent'].replace('eeEurope', 'Europe')
+        df['continent'] = df['continent'].replace('eeAmerica', 'America')
+              
+        # Define function to convert date formats
+        def     convert_dates(date):
+            for fmt in ('%Y-%m-%d', '%Y/%m/%d', '%B %Y %d', '%Y %B %d'):
+                try:
+                    return pd.to_datetime(date, format=fmt)
+                except ValueError:
+                    continue
+            return pd.NaT
         
-        # Convert date columns to datetime format
-        for col in df.columns:
-            if 'date' in col:
-                df[col] = pd.to_datetime(df[col], errors='coerce')
-            return df
-        
-        # Drop erroneous rows in columns which should contain no numbers
-        columns_to_check = ['locality', 'store_type', 'country_code', 'continent']  
-        for col in columns_to_check:
-            df = df[~df[col].astype(str).str.contains('\d')]
-        
+        # Clean staff_numbers
+        df['staff_numbers'] = df['staff_numbers'].str.replace(r'\D', '', regex=True)
+
+        # Apply the function to the 'opening_times' column
+        df['opening_date'] = df['opening_date'].apply(convert_dates)
+
+        # Reset the index
+        df = df.reset_index(drop=True)
+
+        # Allow null webportal values to change datatypes to FLOAT
+        df.iloc[0, 1] = 0
+        df.iloc[0, 7] = 0
+
         return df 
 
     """convert all product weights to kg"""
@@ -103,6 +122,9 @@ class DataCleaning:
         # drop rows with NULL values 
         df_products = df_products.dropna()
 
+         # Remove rows with incorrect data types
+        df_products = df_products[pd.to_numeric(df_products['EAN'], errors='coerce').notnull()]
+
         # Convert date columns to datetime format
         for col in df_products.columns:
             if 'date' in col:
@@ -111,12 +133,14 @@ class DataCleaning:
 
         return df_products
 
+    
     def clean_orders_data(self, orders_df):
-
+        
         # Drop erroneous columns
         orders_df.drop(['level_0', 'first_name', 'last_name', '1'], axis=1, inplace=True)
 
         return orders_df
+        
     
     def clean_date_times_data(self, df):
 
@@ -124,22 +148,32 @@ class DataCleaning:
         df['timestamp'] = pd.to_datetime(df['timestamp'], format = '%H:%M:%S', errors = 'coerce').dt.time
         
         # Remove rows with incorrect data types
-        df[pd.to_numeric(df.month, errors = 'coerce').notnull()]
-        df[pd.to_numeric(df.year, errors = 'coerce').notnull()]
-        df[pd.to_numeric(df.day, errors = 'coerce').notnull()]
-
-        df.date_uuid = df.date_uuid.astype('string')
-
+        df['month'] = pd.to_numeric(df['month'], errors = 'coerce')
+        df['year'] = pd.to_numeric(df['year'], errors = 'coerce')
+        df['day'] = pd.to_numeric(df['day'], errors = 'coerce')
+        df = df.astype({'month': 'object', 'year': 'object', 'day': 'object'})
+        
         # Create a new column ‘date’ that combines year, month, and day columns
-        df['date'] = pd.to_datetime(df[['year', 'month', 'day']], errors = 'coerce')
+        #df['date'] = pd.to_datetime(df[['year', 'month', 'day']], errors = 'coerce')
 
         # Drop old date columns
-        df.drop(['month', 'year', 'day'], axis=1, inplace=True)
+        #df.drop(['month', 'year', 'day'], axis=1, inplace=True)
         
-        x = ['Evening', 'Morning', 'Midday', 'Late_Hours']
-        df = df[df['time_period'].isin(x)]
-        df = df.reset_index(drop=True)
-        
+        df['time_period'].astype(str)
+        df = df[~df['time_period'].str.contains('\d', regex=True)]
+
+        df['date_uuid'].astype(str)
+        def is_uuid(column):
+            try:
+                uuid.UUID(column)
+                return True
+            except ValueError:
+                return False
+
+        mask = df['date_uuid'].apply(is_uuid)
+        df = df[mask]
+
+        # drop rows with NULL values 
         df = df.dropna()
 
         return df
