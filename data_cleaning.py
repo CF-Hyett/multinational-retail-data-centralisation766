@@ -18,8 +18,6 @@ class DataCleaning:
             if 'date' in col:
                 df[col] = pd.to_datetime(df[col], errors='coerce')
 
-        # Remove rows with incorrect data types
-        #df = df[pd.to_numeric(df['some_column'], errors='coerce').notnull()]
         return df
     
     def clean_card_data(self, df):
@@ -36,12 +34,7 @@ class DataCleaning:
         df['card_number'] = df['card_number'].str.replace('?', '')
 
         # Convert date column to datetime format
-        df['expiry_date'] = pd.to_datetime(df['expiry_date'], format = '%m/%y', errors = 'coerce')
-
-        # Convert date column to datetime format
-        #df['date_payment_confirmed'] = pd.to_datetime(df['date_payment_confirmed'], errors='coerce')
-
-        
+        df['expiry_date'] = pd.to_datetime(df['expiry_date'], format = '%m/%y', errors = 'coerce')        
 
         return df 
         
@@ -153,12 +146,7 @@ class DataCleaning:
         df['day'] = pd.to_numeric(df['day'], errors = 'coerce')
         df = df.astype({'month': 'object', 'year': 'object', 'day': 'object'})
         
-        # Create a new column ‘date’ that combines year, month, and day columns
-        #df['date'] = pd.to_datetime(df[['year', 'month', 'day']], errors = 'coerce')
-
-        # Drop old date columns
-        #df.drop(['month', 'year', 'day'], axis=1, inplace=True)
-        
+        # Clean time_period
         df['time_period'].astype(str)
         df = df[~df['time_period'].str.contains('\d', regex=True)]
 
