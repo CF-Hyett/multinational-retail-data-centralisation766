@@ -1,0 +1,8 @@
+pandas
+re
+uuid
+boto3
+requests
+tabula
+PyYAML
+sqlalchemy
