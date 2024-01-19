@@ -3,4 +3,6 @@ pg_creds.yaml
 date_details.json
 .vscode
 __pycache__
+Test.py
+
 
