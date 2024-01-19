@@ -4,5 +4,6 @@ date_details.json
 .vscode
 __pycache__
 Test.py
+.gitignore
 
 

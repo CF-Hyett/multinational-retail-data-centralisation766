@@ -33,12 +33,16 @@ PORT: {your_port}
 5. Query as required to collect up-to-date metrics of the data
 
 ## Project File Structure
-- ```database_utils.py``` contains a class that is used to read the ```db_creds.yaml``` to connect to the RDS database to retrive raw data sources
-- ```pg_cred.yaml``` to upload extracted data for the STAR-based schema
-- ```data_extraction.py ``` contains a class used to extract data from a variety of sources
-- ```data_cleaning.py``` contains a class that is used to clean the data of null and erroneous entries
-- ```sales_data.sessions``` 1-7 will cast the data to the required datatypes and 8-9 will set the primary and foreign key constraints
-- ```sales_data.milestone_4``` contains the queries to get the required metrics for this project
+- ```Data_Classes_&_Main``` 
+    - ```database_utils.py``` contains the class used to read the ```db_creds.yaml``` file to connect to the RDS database retriveing raw data from the sources
+    - ```pg_cred.yaml``` to upload extracted data for the STAR-based schem. Ignore in the repo to maintian security
+    - ```data_extraction.py ``` contains a class used to extract data from a variety of sources
+    - ```data_cleaning.py``` contains a class that is used to clean the data of null and erroneous entries
+    - ```run_classes``` files demonstrate the use of the classes for data extraction and cleaning
+- ```Database_Building_Queries```
+    - ```sales_data.sessions[]``` [1-7] will cast the data to the required  datatypes and [8-9] will set the primary and foreign key constraints
+- ```Business_Analysis_Queries```
+    - ```sales_data.milestone_4``` contains the queries to retrieve the desired business anlytics
 
 
 ## License Information
