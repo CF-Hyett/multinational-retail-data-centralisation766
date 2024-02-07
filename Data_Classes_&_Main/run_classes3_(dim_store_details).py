@@ -15,7 +15,6 @@ data_cleaning = DataCleaning(data_extractor)
 number_of_stores_url = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
 store_details_url = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/"
 
-# Define API header details
 header = x_api_key 
 
 number_of_stores = data_extractor.list_number_of_stores(number_of_stores_url, header)

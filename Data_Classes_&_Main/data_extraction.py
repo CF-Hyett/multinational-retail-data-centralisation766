@@ -13,13 +13,11 @@ class DataExtractor:
         return df
     
     def retrieve_pdf_data(self, link):
-        # read all pages from the PDF document at the given link
         dfs = tabula.read_pdf(link , multiple_tables=True , pages='all' , lattice=True)
         df = pd.concat(dfs)
         return df
 
     def list_number_of_stores(self, number_of_stores_url, header):
-        # Make API call to retrieve number of stores
         response = requests.get(number_of_stores_url, headers=header)
         number_of_stores = response.json()
         return number_of_stores

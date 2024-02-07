@@ -10,7 +10,6 @@ class DataCleaning:
 
     def clean_user_data(self, df):
         
-        # Drop rows with NULL values
         df = df.dropna()
 
         # Convert date columns to datetime format
@@ -22,7 +21,6 @@ class DataCleaning:
     
     def clean_card_data(self, df):
         
-        # drop rows with NULL values
         df = df.dropna()
 
         # Clean card_provider column
@@ -33,7 +31,6 @@ class DataCleaning:
 
         df['card_number'] = df['card_number'].str.replace('?', '')
 
-        # Convert date column to datetime format
         df['expiry_date'] = pd.to_datetime(df['expiry_date'], format = '%m/%y', errors = 'coerce')        
 
         return df 
@@ -69,7 +66,6 @@ class DataCleaning:
         # Apply the function to the 'opening_times' column
         df['opening_date'] = df['opening_date'].apply(convert_dates)
 
-        # Reset the index
         df = df.reset_index(drop=True)
 
         # Allow null webportal values to change datatypes to FLOAT
@@ -109,10 +105,8 @@ class DataCleaning:
     
     def clean_products_data(self, df_products):
         
-         # Reset the index column
         df_products.set_index(df_products.columns[0], inplace=True)
 
-        # drop rows with NULL values 
         df_products = df_products.dropna()
 
          # Remove rows with incorrect data types
@@ -161,7 +155,6 @@ class DataCleaning:
         mask = df['date_uuid'].apply(is_uuid)
         df = df[mask]
 
-        # drop rows with NULL values 
         df = df.dropna()
 
         return df
