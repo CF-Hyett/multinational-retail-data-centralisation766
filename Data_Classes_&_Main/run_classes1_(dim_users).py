@@ -16,14 +16,11 @@ print(table_name)
 #%%
 
 df = data_extractor.read_rds_table(table_name)
-#df.columns
 null_count = df.isnull().sum()
 print(null_count)
 #%%
 
-# Clean the data
 df_clean = data_cleaning.clean_user_data(df)
-
 #%%
 
 # Upload the cleaned data to the 'sales_data' database in a table named 'dim_users'

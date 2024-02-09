@@ -99,7 +99,6 @@ class DataCleaning:
                 # Handle cases where conversion is not possible
                 return None
         
-        # call convert_weight function 
         df_products['weight'] = df_products['weight'].apply(convert_weight)
         return df_products
     

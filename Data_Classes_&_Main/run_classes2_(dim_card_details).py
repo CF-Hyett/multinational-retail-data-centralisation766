@@ -11,14 +11,13 @@ data_cleaning = DataCleaning(data_extractor)
 df = data_extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
 #%%
 
-
 df['card_number'] = df['card_number'].str.replace('?', '')
 df.info()
 #%%
 
 df_clean = data_cleaning.clean_card_data(df)
-
 #%%
+
 df_clean.info()
 df_clean.head(10)
 #%%

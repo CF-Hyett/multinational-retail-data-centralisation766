@@ -23,9 +23,10 @@ print(number_of_stores)
 
 stores_df = data_extractor.retrieve_stores_data(store_details_url, header, 451)
 #%%
-stores_df.info()
 
+stores_df.info()
 #%%
+
 stores_df['country_code'].value_counts()
 #%%
 

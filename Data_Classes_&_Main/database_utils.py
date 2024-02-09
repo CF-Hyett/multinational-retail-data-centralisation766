@@ -11,7 +11,6 @@ class DatabaseConnector:
         self.table_names = self.list_db_tables()
         
     def read_db_creds(self):
-        # Open the file and load the YAML data
          with open(self.filename, 'r') as file:
             db_creds = yaml.safe_load(file)
          return db_creds
